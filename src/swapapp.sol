@@ -10,16 +10,20 @@ import {IV2Router02} from "../src/interface/I2Router02.sol";
 contract swapapp {
     address public V2Router02;
 
+    event SwapToken(address tokenIn, address tokenOutm, uint256 amountIn, uint256 amountOut);
     constructor(address V2Router02_) {
         V2Router02 = V2Router02_;
     }
 
     function swapToken(
-        uint256 amountln_,
+        uint256 amountIn_,
         uint256 amountOutMin_,
         address[] calldata path_,
         uint256 deadline_
     ) external {
-        IV2Router02(V2Router02).swapExactTokensForTokens(amountln_, amountOutMin_, path_, msg.sender, deadline_);
+        
+        uint256[] memory amountsOut = IV2Router02(V2Router02).swapExactTokensForTokens(amountIn_, amountOutMin_, path_, msg.sender, deadline_);
+
+        emit SwapToken(path_[0], path_[path_.length - 1], amountIn_, amountsOut[amountsOut.length - 1]);
     }
 }
