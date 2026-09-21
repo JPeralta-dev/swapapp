@@ -15,12 +15,11 @@ contract swapapp {
     }
 
     function swapToken(
-        uint256 amountln,
-        uint256 amountOutMin,
-        address[] calldata path,
-        address to,
-        uint256 deadline
+        uint256 amountln_,
+        uint256 amountOutMin_,
+        address[] calldata path_,
+        uint256 deadline_
     ) external {
-        IV2Router02(V2Router02).swapExactTokensForTokens(amountln, amountOutMin, path, to, deadline);
+        IV2Router02(V2Router02).swapExactTokensForTokens(amountln_, amountOutMin_, path_, msg.sender, deadline_);
     }
 }
