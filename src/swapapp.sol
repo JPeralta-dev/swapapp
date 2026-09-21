@@ -9,7 +9,7 @@ import {IV2Router02} from "../src/interface/I2Router02.sol";
 import { IERC20 } from "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "../lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract swapapp {
+contract Swapapp {
     using SafeERC20 for IERC20; 
     address public V2Router02;
 
