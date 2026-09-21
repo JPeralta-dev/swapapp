@@ -10,6 +10,7 @@ import { IERC20 } from "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC
 import { SafeERC20 } from "../lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract swapapp {
+    using SafeERC20 for IERC20; 
     address public V2Router02;
 
     event SwapToken(address tokenIn, address tokenOutm, uint256 amountIn, uint256 amountOut);
@@ -24,7 +25,7 @@ contract swapapp {
         uint256 deadline_
     ) external {
         
-        IERC20(path_[0]).transferFrom(msg.sender, address(this), amountIn_);
+        IERC20(path_[0]).safeTransferFrom(msg.sender, address(this), amountIn_);
 
         uint256[] memory amountsOut = IV2Router02(V2Router02).swapExactTokensForTokens(amountIn_, amountOutMin_, path_, msg.sender, deadline_);
 
