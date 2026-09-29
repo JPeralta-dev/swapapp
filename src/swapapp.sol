@@ -13,7 +13,7 @@ contract Swapapp {
     using SafeERC20 for IERC20; 
     address public V2Router02;
 
-    event SwapToken(address tokenIn, address tokenOutm, uint256 amountIn, uint256 amountOut);
+    event SwapToken(address indexed userFrom,address indexed tokenIn, address indexed tokenOutm, uint256  amountIn, uint256 amountOut);
     constructor(address V2Router02_) {
         V2Router02 = V2Router02_;
     }
@@ -29,6 +29,6 @@ contract Swapapp {
         IERC20(path_[0]).approve(V2Router02, amountIn_);
         uint256[] memory amountsOut = IV2Router02(V2Router02).swapExactTokensForTokens(amountIn_, amountOutMin_, path_, msg.sender, deadline_);
 
-        emit SwapToken(path_[0], path_[path_.length - 1], amountIn_, amountsOut[amountsOut.length - 1]);
+        emit SwapToken(msg.sender,path_[0], path_[path_.length - 1], amountIn_, amountsOut[amountsOut.length - 1]);
     }
 }
