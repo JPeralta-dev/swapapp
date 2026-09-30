@@ -34,7 +34,11 @@ contract swappTest is Test {
     function testSwapTokenCorrectly() public {
         uint256 amountIn = 1000 * 1e6; // 1,000 USDC (6 decimales)
 
-        // 1. CHEATCODE deal: Asigna 1,000 USDC de la nada en el almacenamiento local del token
+        // 1. CHEATCODE vm.deal: Inicializa la cuenta de Alice localmente con 1 ETH
+        // Esto evita que Foundry tenga que consultar al RPC por el estado de una cuenta nueva
+        vm.deal(user, 1 ether);
+
+        // 2. CHEATCODE deal: Asigna 1,000 USDC en el almacenamiento local del token
         deal(usdc, user, amountIn);
         assertEq(IERC20(usdc).balanceOf(user), amountIn, "El usuario debe tener 1,000 USDC");
 
