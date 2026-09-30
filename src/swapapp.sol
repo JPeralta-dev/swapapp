@@ -13,7 +13,7 @@ contract Swapapp {
     using SafeERC20 for IERC20; 
     address public V2Router02;
 
-    event SwapToken(address indexed userFrom,address indexed tokenIn, address indexed tokenOutm, uint256  amountIn, uint256 amountOut);
+    event SwapToken(address indexed fromUser,address indexed tokenIn, address indexed tokenOut, uint256  amountIn, uint256 amountOut);
     constructor(address V2Router02_) {
         V2Router02 = V2Router02_;
     }

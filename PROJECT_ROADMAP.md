@@ -78,7 +78,10 @@
 
 ## 4. Preguntas de Diseño que Resolveremos Juntos
 
-1. **Estrategia de Liquidez**: Para hacer swaps reales entre USDC y DAI en local, ¿usaremos un fork local de Uniswap V2 de Ethereum mainnet con Anvil (`anvil --fork-url ...`), o desplegaremos una Factory/Router minimalista en nuestro propio Anvil?
-2. **Base de Datos y ORM**: ¿Prefieres usar PostgreSQL con SQL nativo/`pg`, o un ORM moderno y tipado como **Drizzle** o **Prisma**?
+1. **Estrategia de Liquidez**: Para hacer swaps reales entre USDC y DAI en local, ¿usaremos un fork local de Uniswap V2 de Ethereum mainnet con Anvil (`anvil --fork-url ...`), o desplegaremos una Factory/Router minimalista en nuestro propio Anvil? 
+*Respuesta:* vamos hacer una fork local de Uniswap V2 de Ethereumn mainnet con anvil para menos complejidad y mas realimos
+2. **Base de Datos y ORM**: ¿Prefieres usar PostgreSQL con SQL nativo/`pg`, o un ORM moderno y tipado como **Drizzle** o **Prisma**? 
+*Respuesta:* Depende realmente necesito investigar pero creo que puede ser mas comodo utilizar Drizzle pero creo que puede ser beneficioso tener mayor manejo de cada sentencia.
 3. **Servidor HTTP**: ¿Te gusta más **Fastify** (altísimo rendimiento) o **Express** (clásico y muy directo)?
+*Respuesta:* Me siento mas comodo con express porque he trabajaod muchisimos con el pero creo que puede tener mayor utilidad dependiendo de donde queramos llevar el proyecto tener fastify
 4. **Almacenamiento de Reorganizaciones**: ¿Cómo modelaremos los swaps que entran en un bloque que luego resulta huérfano (reorg)?
