@@ -66,11 +66,12 @@
   - Tests en Foundry (`forge test` con fork y cheatcodes `deal`/`prank` completados con éxito).
   - Script de despliegue `DeploySwapapp.s.sol` configurado.
 - [ ] **Fase 3: El Backend Indexador (TypeScript + Node.js + PostgreSQL)**
-  - Inicialización del proyecto backend (`package.json`, `tsconfig.json`).
-  - Esquema de base de datos en PostgreSQL.
-  - Creación del Worker Ingestor usando `viem` para escuchar bloques y decodificar eventos.
-  - Implementación de idempotencia y control de caídas.
-  - Servidor API REST y WebSockets en tiempo real.
+  - [x] Inicialización del proyecto backend (`package.json`, `tsconfig.json`).
+  - [x] Esquema de base de datos en PostgreSQL con Drizzle ORM (`sync_state`, `blocks`, `swaps`).
+  - [x] Creación del Worker Ingestor usando `viem` para escuchar bloques y decodificar eventos.
+  - [x] Implementación de idempotencia (clave única compuesta txHash + logIndex) y Checkpointer transaccional.
+  - [ ] Instalación de dependencias (`npm install`) y migración a DB (`npm run db:push`).
+  - [ ] Servidor API REST y WebSockets en tiempo real.
 - [ ] **Fase 4: Frontend y Experiencia Visual**
   - Aplicación Next.js / Tailwind.
   - Componente de Swap y panel de eventos en vivo.

@@ -12,4 +12,10 @@ docs/
 
 # Dotenv file
 .env
- 
+.env.*
+!.env.example
+
+# Node / Backend
+node_modules/
+dist/
+build/
