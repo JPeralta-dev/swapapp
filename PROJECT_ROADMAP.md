@@ -60,10 +60,11 @@
 - [x] **Fase 1C: Conexión de Red Local en MetaMask e Importación de Tokens**
   - Configuración de RPC `http://127.0.0.1:8545` y Chain ID `31337`.
   - Visualización de 10,000 ETH y saldos de USDC / DAI.
-- [] **Fase 2: El Contrato Swapapp y el Entorno de Liquidez**
+- [x] **Fase 2: El Contrato Swapapp y el Entorno de Liquidez**
   - Ajuste de eventos en `Swapapp.sol` (añadir `indexed` para búsquedas eficientes).
-  - Configuración del Router/Factory V2 o simulador de pool para permitir intercambios reales de tokens.
-  - Tests en Foundry (`forge test`).
+  - Configuración del Router/Factory V2 (SushiSwap V2 en Arbitrum One) para intercambios reales de tokens.
+  - Tests en Foundry (`forge test` con fork y cheatcodes `deal`/`prank` completados con éxito).
+  - Script de despliegue `DeploySwapapp.s.sol` configurado.
 - [ ] **Fase 3: El Backend Indexador (TypeScript + Node.js + PostgreSQL)**
   - Inicialización del proyecto backend (`package.json`, `tsconfig.json`).
   - Esquema de base de datos en PostgreSQL.
