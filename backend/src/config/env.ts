@@ -4,7 +4,9 @@ import z from "zod"
 dotenv.config()
 
 const schemaEnv = z.object({
-    DATABASE_URL: z.string()
+    DATABASE_URL: z.string(),
+    RPC_URL: z.string().default("http://127.0.0.1:8545"),
+    SWAPAPP_CONTRACT_ADDRESS: z.string()
 })
 
 let env: z.infer<typeof schemaEnv>

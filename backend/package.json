@@ -6,13 +6,14 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:push":"npx drizzle-kit push"
-    
+    "db:push": "npx drizzle-kit push",
+    "dev": "tsx watch src/index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
     "dotenv": "^18.0.5",
     "drizzle-orm": "^0.45.3",
     "pg": "^8.23.1",
