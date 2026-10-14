@@ -31,4 +31,8 @@ contract Swapapp {
 
         emit SwapToken(msg.sender,path_[0], path_[path_.length - 1], amountIn_, amountsOut[amountsOut.length - 1]);
     }
+
+    function addLiquidityPool () view external {
+        
+    } 
 }

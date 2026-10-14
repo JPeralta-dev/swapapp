@@ -11,13 +11,12 @@ export const db = drizzle(env.DATABASE_URL)
 async function main() {
     const client = createPublicClient({
         chain: mainnet,
-        transport: http()
+        transport: http(env.RPC_URL),
+        
     })
     const result = await db.select().from(swaps)
-    console.log(result);
-
     const blockNumber = await client.getBlockNumber()
-    console.log(blockNumber);
+    
     
 }
 

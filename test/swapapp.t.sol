@@ -5,8 +5,8 @@
 /// @dev Explain to a developer any extra details
 pragma solidity 0.8.28;
 
-import { Swapapp } from "../src/swapapp.sol";
-import { IERC20 } from "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
+import {Swapapp} from "../src/swapapp.sol";
+import {IERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import "forge-std/Test.sol";
 
 contract swappTest is Test {
@@ -21,7 +21,9 @@ contract swappTest is Test {
 
     address user = makeAddr("alice");
 
-    event SwapToken(address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut);
+    event SwapToken(
+        address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut
+    );
 
     function setUp() public {
         app = new Swapapp(router);

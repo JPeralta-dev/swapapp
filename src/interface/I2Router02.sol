@@ -13,4 +13,16 @@ interface IV2Router02 {
         address to,
         uint256 deadline
     ) external returns (uint256[] memory amounts);
+
+    function addLiquidityETH(
+        address token,
+        uint amountTokenDesired,
+        uint amountTokenMin,
+        uint amountETHMin,
+        address to,
+        uint deadline
+    )
+        external
+        payable
+        returns (uint amountToken, uint amountETH, uint liquidity);
 }

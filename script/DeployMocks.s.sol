@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-import { Script, console } from "forge-std/Script.sol";
-import { MockERC20 } from "../src/mocktoken.sol";
+import {Script, console} from "forge-std/Script.sol";
+import {MockERC20} from "../src/mocktoken.sol";
 
 contract DeployMocksScript is Script {
     function run() external returns (MockERC20 tokenA, MockERC20 tokenB) {
         // Clave privada por defecto de la Cuenta 0 de Anvil (o de variable de entorno PRIVATE_KEY)
-        uint256 deployerPrivateKey = vm.envOr(
-            "PRIVATE_KEY",
-            uint256(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80)
-        );
+        uint256 deployerPrivateKey =
+            vm.envOr("PRIVATE_KEY", uint256(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80));
 
         address deployer = vm.addr(deployerPrivateKey);
         console.log("Desplegando contratos desde la cuenta:", deployer);
