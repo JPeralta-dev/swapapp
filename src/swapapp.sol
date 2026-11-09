@@ -30,5 +30,5 @@ contract Swapapp {
         emit SwapToken(msg.sender, path_[0], path_[path_.length - 1], amountIn_, amountsOut[amountsOut.length - 1]);
     }
 
-    function addLiquidityPool() external view {}
+    function addLiquidityPool() external view {} // esta es la funcion que va ayudar a que el usuario tenga DAI/USDT
 }
