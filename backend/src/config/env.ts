@@ -6,7 +6,8 @@ dotenv.config()
 const schemaEnv = z.object({
     DATABASE_URL: z.string(),
     RPC_URL: z.string().default("http://127.0.0.1:8545"),
-    SWAPAPP_CONTRACT_ADDRESS: z.string()
+    SWAPAPP_CONTRACT_ADDRESS: z.string(),
+    START_BLOCK: z.coerce.bigint()
 })
 
 let env: z.infer<typeof schemaEnv>
