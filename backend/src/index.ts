@@ -14,6 +14,7 @@ async function main() {
         transport: http(env.RPC_URL),
         
     })
+    
     const result = await db.select().from(swaps)
     const blockNumber = await client.getBlockNumber()
     
