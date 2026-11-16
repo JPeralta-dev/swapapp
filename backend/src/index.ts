@@ -1,6 +1,7 @@
-import { drizzle } from "drizzle-orm/neon-http"
+import { drizzle } from "drizzle-orm/node-postgres"
 import { createPublicClient, http, parseAbiItem } from 'viem'
 import env from "./config/env.js"
+import { ca } from "zod/locales"
 
 export const db = drizzle(env.DATABASE_URL)
 
@@ -17,7 +18,18 @@ async function main() {
         event: parseAbiItem('event SwapToken(address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut)'), // evento que vamos a observer
         fromBlock: env.START_BLOCK
     })
+
     console.log(logs);
+
+    const normalizeTransactions = logs.map((val) => {
+        val.args.tokenIn?.toLocaleLowerCase()
+        val.args.tokenOut?.toLocaleLowerCase()
+        val.transactionHash.toLocaleLowerCase()
+        val.args.fromUser?.toLocaleLowerCase()
+    })
+
+    console.log(normalizeTransactions);
+    
 
 }
 
