@@ -2,6 +2,7 @@ import { drizzle } from "drizzle-orm/node-postgres"
 import { createPublicClient, http, parseAbiItem } from 'viem'
 import env from "./config/env.js"
 import { ca } from "zod/locales"
+import { swaps } from "./db/schemas.js"
 
 export const db = drizzle(env.DATABASE_URL)
 
@@ -28,9 +29,13 @@ async function main() {
         val.args.fromUser?.toLocaleLowerCase()
     })
 
-    console.log(normalizeTransactions);
     
 
+    console.log(normalizeTransactions);
+    
+    const saveTransaction = db.insert(swaps).values([
+
+    ])    
 }
 
 await main()
