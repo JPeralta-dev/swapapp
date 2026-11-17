@@ -19,7 +19,7 @@ export const blocks = pgTable("blocks", {
 export const swaps = pgTable("swaps", {
   id: serial("id").primaryKey(),
   txHash: varchar("tx_hash", { length: 66 }).notNull(),
-  logIndex: integer("log_index").notNull(),
+  logIndex: integer("log_index").notNull(), 
   blockNumber: bigint("block_number", { mode: "bigint" }).notNull(),
   fromUser: varchar("from_user", { length: 42 }).notNull(),
   tokenIn: varchar("token_in", { length: 42 }).notNull(),
