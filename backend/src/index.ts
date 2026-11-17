@@ -46,15 +46,15 @@ async function main() {
 
     console.log(logs);
 
-    const getBlock = logs.map(async (val) => {
+    const getBlock = Promise.all(logs.map(async (val) => {
         const block = await client.getBlock({ blockNumber: val.blockNumber })  // esto consulta los bloques
         return {
             blockNumber: val.blockNumber,
             blockHash: val.blockHash,
             parentHash: block.parentHash,
-            timestamp: Date.now()
+            timestamp: block.timestamp
         }
-    })
+    }))
 
     
 
@@ -64,7 +64,7 @@ async function main() {
 
         return {
             id: uuidv7(),
-            txHash: val.blockHash,
+            txHash: val.transactionHash,
             logIndex: val.logIndex,
             blockNumber: val.blockNumber,
             fromUser: val.args.fromUser,
