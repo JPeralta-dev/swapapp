@@ -45,8 +45,14 @@ async function main() {
     })
 
     console.log(logs);
+    // importante regla: cada transaccion puede estar un un bloque es decir si 10 transaccione eestan en un nbloque
+    // la promesa siguiente lo que va hacer es 10 peticiones.
+    
+    const uniqueBlocks = [...new Set(logs.map((nBlock) => nBlock))]
 
-    const getBlock = Promise.all(logs.map(async (val) => {
+    /// con esto se supone que esta listo 
+
+    const getBlock =await  Promise.all(uniqueBlocks.map(async (val) => {
         const block = await client.getBlock({ blockNumber: val.blockNumber })  // esto consulta los bloques
         return {
             blockNumber: val.blockNumber,
@@ -56,12 +62,18 @@ async function main() {
         }
     }))
 
-    
+    // hacemos un mapa para una busqueda mas rapida
+    const mapTimestapBlock = new Map(getBlock.map((val => [val.timestamp, val])))
 
     console.log(getBlock);
 
     const getTransactions = logs.map((val) => {
 
+        if (!val.blockTimestamp) { 
+            return
+        }
+        const block = mapTimestapBlock.get(val.blockTimestamp)
+        
         return {
             id: uuidv7(),
             txHash: val.transactionHash,
@@ -72,14 +84,12 @@ async function main() {
             tokenOut: val.args.tokenOut,
             amountIn: val.args.amountIn,
             amountOut: val.args.amountOut,
-            timestamp: val.blockTimestamp
+            timestamp: val.blockTimestamp ?? block?.timestamp
         }
     })
 
     console.log(getTransactions);
     
-
-
 
     // esta va a ser la transaccion atomica
     const resultTransaction = await db.transaction(async (tx) => {
