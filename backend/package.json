@@ -17,6 +17,7 @@
     "dotenv": "^18.0.5",
     "drizzle-orm": "^0.45.3",
     "pg": "^8.23.1",
+    "uuidv7": "^1.2.1",
     "viem": "^2.57.3"
   },
   "devDependencies": {

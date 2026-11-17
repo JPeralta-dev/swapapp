@@ -20,6 +20,9 @@ importers:
       pg:
         specifier: ^8.23.1
         version: 8.23.1
+      uuidv7:
+        specifier: ^1.2.1
+        version: 1.2.1
       viem:
         specifier: ^2.57.3
         version: 2.57.3(typescript@7.0.2)
@@ -885,6 +888,10 @@ packages:
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
 
+  uuidv7@1.2.1:
+    resolution: {integrity: sha512-4kPkK3/XTQW9Hbm4CaqfICn+kY9LJtDVEOfgsRRra/+n2Ofg4NqzRFceAkxvQ/Ud/6BpHOPzj8cirqM7TzTN5Q==}
+    hasBin: true
+
   viem@2.57.3:
     resolution: {integrity: sha512-441q6Z42ZU7+mTJrYAjQsBpVWK76nyGQcKOCGT6hp+tBpw1XsnTIgKaqZFLTaW5xmBN1ummEFgzFWmR05FISTg==}
     peerDependencies:
@@ -1458,6 +1465,8 @@ snapshots:
       '@typescript/typescript-win32-x64': 7.0.2
 
   undici-types@8.9.0: {}
+
+  uuidv7@1.2.1: {}
 
   viem@2.57.3(typescript@7.0.2):
     dependencies:

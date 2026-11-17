@@ -3,6 +3,7 @@ import { createPublicClient, http, parseAbiItem } from 'viem'
 import env from "./config/env.js"
 import { swaps } from "./db/schemas.js"
 import z from "zod"
+import { uuidv7 } from "uuidv7";
 
 export const db = drizzle(env.DATABASE_URL)
 
@@ -55,23 +56,35 @@ async function main() {
         }
     })
 
+    
+
     console.log(getBlock);
 
+    const getTransactions = logs.map((val) => {
 
-
-    const normalizeTransactions = logs.map((val) => {
-        val.args.tokenIn?.toLocaleLowerCase()
-        val.args.tokenOut?.toLocaleLowerCase()
-        val.transactionHash.toLocaleLowerCase()
-        val.args.fromUser?.toLocaleLowerCase()
+        return {
+            id: uuidv7(),
+            txHash: val.blockHash,
+            logIndex: val.logIndex,
+            blockNumber: val.blockNumber,
+            fromUser: val.args.fromUser,
+            tokenIn: val.args.tokenIn,
+            tokenOut: val.args.tokenOut,
+            amountIn: val.args.amountIn,
+            amountOut: val.args.amountOut,
+            timestamp: val.blockTimestamp
+        }
     })
 
-    console.log(normalizeTransactions);
+    console.log(getTransactions);
+    
+
+
 
     // esta va a ser la transaccion atomica
     const resultTransaction = await db.transaction(async (tx) => {
 
-        // ya puedo utilizar  getBlock con values 
+        // ya puedo utilizar getBlock con values 
     })
 }
 
