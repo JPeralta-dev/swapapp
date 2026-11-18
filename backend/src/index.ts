@@ -76,14 +76,17 @@ async function main() {
             .insert(swaps)
             .values(cleanTransactions)
             .returning()
+            .onConflictDoNothing()
         
         const block = tx
             .insert(blocks)
             .values(arrayBlocks)
             .returning()
+            .onConflictDoNothing()
     
         
     })
+
 }
 
 await main()    
