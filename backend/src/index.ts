@@ -76,6 +76,7 @@ async function main() {
             .insert(swaps)
             .values(cleanTransactions)
             .returning()
+        
         const block = tx
             .insert(blocks)
             .values(arrayBlocks)
