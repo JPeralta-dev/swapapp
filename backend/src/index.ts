@@ -24,15 +24,15 @@ async function main() {
     // importante regla: cada transaccion puede estar un un bloque es decir si 10 transaccione eestan en un nbloque
     // la promesa siguiente lo que va hacer es 10 peticiones.
     
-    const uniqueBlocks = [...new Set(logs.map((nBlock) => nBlock))] // vamos a investigarlo a nivel profundo 
+    const uniqueBlocks = [...new Set(logs.map((nBlock) => nBlock.blockNumber))] // vamos a investigarlo a nivel profundo 
 
     /// con esto se supone que esta listo 
 
     const arrayBlocks =await  Promise.all(uniqueBlocks.map(async (val) => {
-        const block = await client.getBlock({ blockNumber: val.blockNumber })  // esto consulta los bloques
+        const block = await client.getBlock({ blockNumber: val })  // esto consulta los bloques
         return {
-            blockNumber: val.blockNumber,
-            blockHash: val.blockHash,
+            blockNumber: val,
+            blockHash: block.hash,
             parentHash: block.parentHash,
             timestamp: block.timestamp
         }
