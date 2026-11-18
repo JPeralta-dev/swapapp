@@ -2,7 +2,6 @@ import { drizzle } from "drizzle-orm/node-postgres"
 import { createPublicClient, http, parseAbiItem } from 'viem'
 import env from "./config/env.js"
 import { blocks, swaps, syncState } from "./db/schemas.js"
-import z from "zod"
 import { uuidv7 } from "uuidv7";
 
 export const db = drizzle(env.DATABASE_URL)
@@ -25,7 +24,7 @@ async function main() {
     // importante regla: cada transaccion puede estar un un bloque es decir si 10 transaccione eestan en un nbloque
     // la promesa siguiente lo que va hacer es 10 peticiones.
     
-    const uniqueBlocks = [...new Set(logs.map((nBlock) => nBlock))]
+    const uniqueBlocks = [...new Set(logs.map((nBlock) => nBlock))] // vamos a investigarlo a nivel profundo 
 
     /// con esto se supone que esta listo 
 
@@ -71,20 +70,20 @@ async function main() {
     const resultTransaction = await db.transaction(async (tx) => {
 
         if (transactions.length === 0 || !transactions) return;
+        // en mi opinion el worker primero sincroniza el estado y luego si actualiza
+        const sync = tx 
 
-        const swap = tx
+        const swap = await tx
             .insert(swaps)
             .values(cleanTransactions)
             .returning()
-            .onConflictDoNothing()
+            .onConflictDoNothing() // idempotente
         
-        const block = tx
+        const block =  await tx
             .insert(blocks)
             .values(arrayBlocks)
             .returning()
             .onConflictDoNothing()
-    
-        
     })
 
 }
