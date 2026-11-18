@@ -39,14 +39,11 @@ async function main() {
     }))
 
     // hacemos un mapa para una busqueda mas rapida
-    const mapTimestapBlock = new Map(arrayBlocks.map((val => [val.timestamp, val])))
+    const mapTimestapBlock = new Map(arrayBlocks.map((val => [val.blockNumber, val])))
 
     const transactions = logs.map((val) => {
 
-        if (!val.blockTimestamp) { 
-            return
-        }
-        const block = mapTimestapBlock.get(val.blockTimestamp)
+        const block = mapTimestapBlock.get(val.blockNumber)
         
         return {
             id: uuidv7(),
@@ -81,7 +78,7 @@ async function main() {
         
         const block =  await tx
             .insert(blocks)
-            .values(arrayBlocks)
+            .values(arrayBlocks.map(block => ({...block, timestamp: new Date(Number(block.timestamp) * 1000) })))
             .returning()
             .onConflictDoNothing()
     })
