@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, bigint, timestamp, numeric, integer, uniqueIndex, index } from "drizzle-orm/pg-core";
+import { pgTable,varchar, bigint, timestamp, numeric, integer, uniqueIndex, index } from "drizzle-orm/pg-core";
 
 // 1. Tabla de Control / Checkpoint
 export const syncState = pgTable("sync_state", {
@@ -17,7 +17,7 @@ export const blocks = pgTable("blocks", {
 
 // 3. Tabla de Swaps (Los eventos normalizados)
 export const swaps = pgTable("swaps", {
-  id: serial("id").primaryKey(),
+  id: varchar("id").primaryKey(),
   txHash: varchar("tx_hash", { length: 66 }).notNull(),
   logIndex: integer("log_index").notNull(), 
   blockNumber: bigint("block_number", { mode: "bigint" }).notNull(),
