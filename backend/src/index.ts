@@ -34,19 +34,19 @@ async function main() {
             blockNumber: val.blockNumber,
             blockHash: val.blockHash,
             parentHash: block.parentHash,
-            timestamp: new Date(Number(block.timestamp) * 1000)
+            timestamp: block.timestamp
         }
     }))
 
     // hacemos un mapa para una busqueda mas rapida
-    //const mapTimestapBlock = new Map(arrayBlocks.map((val => [val.timestamp, val])))
+    const mapTimestapBlock = new Map(arrayBlocks.map((val => [val.timestamp, val])))
 
     const transactions = logs.map((val) => {
 
         if (!val.blockTimestamp) { 
             return
         }
-        //const block = mapTimestapBlock.get(val.blockTimestamp)
+        const block = mapTimestapBlock.get(val.blockTimestamp)
         
         return {
             id: uuidv7(),
@@ -58,7 +58,7 @@ async function main() {
             tokenOut: val.args.tokenOut!,
             amountIn: val.args.amountIn!.toString(),
             amountOut: val.args.amountOut!.toString(),
-            timestamp: new Date(Number(val.blockTimestamp) * 1000)
+            timestamp: new Date(Number(block!.timestamp!) * 1000)
         }
     })
 
