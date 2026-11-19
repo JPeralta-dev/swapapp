@@ -15,9 +15,9 @@ async function main() {
         transport: http(env.RPC_URL),
     })
 
-    const resultLastBlock = await db.select().from(syncState).where(eq(syncState.id, "swapapp_indexer")) || env.START_BLOCK
+    const [existingBlock]= await db.select().from(syncState).where(eq(syncState.id, "swapapp_indexer")) || env.START_BLOCK
 
-    const lastBlock = resultLastBlock[0].lastIndexedBlock ?? env.START_BLOCK
+    const lastBlock = existingBlock ? existingBlock.lastIndexedBlock : env.START_BLOCK - 1n
 
     //const swapTokenItem = parseAbiItem("function swapToken(uint256 amountIn_, uint256 amountOutMin_, address[] calldata path_, uint256 deadline_)")
     // tenemos todas las transacciones pero hay que recordar que en un bloque dentro puende haber varias transacciones
