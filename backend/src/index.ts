@@ -3,6 +3,7 @@ import { createPublicClient, http, parseAbiItem } from 'viem'
 import env from "./config/env.js"
 import { blocks, swaps, syncState } from "./db/schemas.js"
 import { uuidv7 } from "uuidv7";
+import { eq } from "drizzle-orm";
 
 export const db = drizzle(env.DATABASE_URL)
 
@@ -13,12 +14,16 @@ async function main() {
         transport: http(env.RPC_URL),
     })
 
+    const resultLastBlock = await db.select().from(syncState).where(eq(syncState.id, "swapapp_indexer")) || env.START_BLOCK
+
+    const lastBlock =  resultLastBlock[0].lastIndexedBlock ?? env.START_BLOCK
+
     //const swapTokenItem = parseAbiItem("function swapToken(uint256 amountIn_, uint256 amountOutMin_, address[] calldata path_, uint256 deadline_)")
     // tenemos todas las transacciones pero hay que recordar que en un bloque dentro puende haber varias transacciones
     const logs = await client.getLogs({
         address: '0x40ec018CDa28e11c3BfF23487dcE6102459A25B9', //contrato que vamos a estar observando
         event: parseAbiItem('event SwapToken(address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut)'), // evento que vamos a observer
-        fromBlock: env.START_BLOCK
+        fromBlock: lastBlock
     })
 
     // importante regla: cada transaccion puede estar un un bloque es decir si 10 transaccione eestan en un nbloque
@@ -70,17 +75,19 @@ async function main() {
         // en mi opinion el worker primero sincroniza el estado y luego si actualiza
         const sync = tx 
 
-        const swap = await tx
-            .insert(swaps)
-            .values(cleanTransactions)
-            .returning()
-            .onConflictDoNothing() // idempotente
-        
         const block =  await tx
             .insert(blocks)
             .values(arrayBlocks.map(block => ({...block, timestamp: new Date(Number(block.timestamp) * 1000) })))
-            .returning()
             .onConflictDoNothing()
+            .returning()
+        
+        const swap = await tx
+            .insert(swaps)
+            .values(cleanTransactions)
+            .onConflictDoNothing() // idempotente
+            .returning()
+        
+        
     })
 
 }
