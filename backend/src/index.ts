@@ -14,8 +14,9 @@ async function main() {
         // quitamos el mainnet porque en anvil estamos utilizando 31337
         transport: http(env.RPC_URL),
     })
+    const currentBlock = await client.getBlockNumber()
 
-    const [existingBlock]= await db.select().from(syncState).where(eq(syncState.id, "swapapp_indexer")) || env.START_BLOCK
+    const [existingBlock] = await db.select().from(syncState).where(eq(syncState.id, "swapapp_indexer")) || env.START_BLOCK
 
     const lastBlock = existingBlock ? existingBlock.lastIndexedBlock : env.START_BLOCK - 1n
 
@@ -24,7 +25,8 @@ async function main() {
     const logs = await client.getLogs({
         address: '0x40ec018CDa28e11c3BfF23487dcE6102459A25B9', //contrato que vamos a estar observando
         event: parseAbiItem('event SwapToken(address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut)'), // evento que vamos a observer
-        fromBlock: lastBlock + 1n
+        fromBlock: lastBlock + 1n,
+        toBlock: currentBlock
     })
 
     // importante regla: cada transaccion puede estar un un bloque es decir si 10 transaccione eestan en un nbloque
@@ -74,7 +76,13 @@ async function main() {
     // esta va a ser la transaccion atomica
     const resultTransaction = await db.transaction(async (tx) => {
 
-        if (transactions.length === 0 || !transactions) return;
+        if (logs.length === 0 || !transactions) {
+            await tx
+                .update(syncState)
+                .set({ updatedAt: new Date(), lastIndexedBlock: currentBlock })
+                .where(eq(syncState.id, "swapapp_indexer"))
+            return
+        };
         // en mi opinion el worker primero sincroniza el estado y luego si actualiza
 
 
