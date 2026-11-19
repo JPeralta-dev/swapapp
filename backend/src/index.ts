@@ -23,7 +23,7 @@ async function main() {
     const logs = await client.getLogs({
         address: '0x40ec018CDa28e11c3BfF23487dcE6102459A25B9', //contrato que vamos a estar observando
         event: parseAbiItem('event SwapToken(address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut)'), // evento que vamos a observer
-        fromBlock: lastBlock
+        fromBlock: lastBlock + 1n
     })
 
     // importante regla: cada transaccion puede estar un un bloque es decir si 10 transaccione eestan en un nbloque
