@@ -1,3 +1,4 @@
+import { timestamp } from 'drizzle-orm/pg-core';
 import { drizzle } from "drizzle-orm/node-postgres"
 import { createPublicClient, http, parseAbiItem } from 'viem'
 import env from "./config/env.js"
@@ -16,7 +17,7 @@ async function main() {
 
     const resultLastBlock = await db.select().from(syncState).where(eq(syncState.id, "swapapp_indexer")) || env.START_BLOCK
 
-    const lastBlock =  resultLastBlock[0].lastIndexedBlock ?? env.START_BLOCK
+    const lastBlock = resultLastBlock[0].lastIndexedBlock ?? env.START_BLOCK
 
     //const swapTokenItem = parseAbiItem("function swapToken(uint256 amountIn_, uint256 amountOutMin_, address[] calldata path_, uint256 deadline_)")
     // tenemos todas las transacciones pero hay que recordar que en un bloque dentro puende haber varias transacciones
@@ -28,12 +29,12 @@ async function main() {
 
     // importante regla: cada transaccion puede estar un un bloque es decir si 10 transaccione eestan en un nbloque
     // la promesa siguiente lo que va hacer es 10 peticiones.
-    
+
     const uniqueBlocks = [...new Set(logs.map((nBlock) => nBlock.blockNumber))] // vamos a investigarlo a nivel profundo 
 
     /// con esto se supone que esta listo 
 
-    const arrayBlocks =await  Promise.all(uniqueBlocks.map(async (val) => {
+    const arrayBlocks = await Promise.all(uniqueBlocks.map(async (val) => {
         const block = await client.getBlock({ blockNumber: val })  // esto consulta los bloques
         return {
             blockNumber: val,
@@ -49,7 +50,7 @@ async function main() {
     const transactions = logs.map((val) => {
 
         const block = mapTimestapBlock.get(val.blockNumber)
-        
+
         return {
             id: uuidv7(),
             txHash: val.transactionHash,
@@ -64,31 +65,50 @@ async function main() {
         }
     })
 
-    console.log(transactions);
-    
-    const cleanTransactions = transactions.filter((t): t is NonNullable<typeof t> => t !== undefined); // sagrada para quitar undedined
-    
+
+
+    const cleanTransactions = transactions.filter((t): t is NonNullable<typeof t> => t !== undefined); // sagrada para quitar undefined
+
+
+    const maxNumberBlock = arrayBlocks.reduce((max, block) => block.blockNumber > max ? block.blockNumber : max, arrayBlocks[0].blockNumber)
     // esta va a ser la transaccion atomica
     const resultTransaction = await db.transaction(async (tx) => {
 
         if (transactions.length === 0 || !transactions) return;
         // en mi opinion el worker primero sincroniza el estado y luego si actualiza
-        const sync = tx 
 
-        const block =  await tx
+
+        const block = tx
             .insert(blocks)
-            .values(arrayBlocks.map(block => ({...block, timestamp: new Date(Number(block.timestamp) * 1000) })))
+            .values(arrayBlocks.map(block => ({ ...block, timestamp: new Date(Number(block.timestamp) * 1000) })))
             .onConflictDoNothing()
             .returning()
-        
-        const swap = await tx
+
+        const swap = tx
             .insert(swaps)
             .values(cleanTransactions)
             .onConflictDoNothing() // idempotente
             .returning()
-        
-        
+
+        const sync = tx
+            .insert(syncState)
+            .values({
+                id: "swapapp_indexer",
+                lastIndexedBlock: maxNumberBlock,
+                updatedAt: new Date()
+            })
+            .onConflictDoUpdate({
+                target: syncState.id,
+                set: {
+                    lastIndexedBlock: maxNumberBlock,
+                    updatedAt: new Date()
+                }
+            })
+
+        return Promise.all([block, swap, sync])
     })
+
+    console.log(resultTransaction);
 
 }
 
