@@ -20,14 +20,19 @@ async function main() {
 
     const lastBlock = existingBlock ? existingBlock.lastIndexedBlock : env.START_BLOCK - 1n
 
+    console.log(lastBlock, currentBlock, existingBlock);
+    
     //const swapTokenItem = parseAbiItem("function swapToken(uint256 amountIn_, uint256 amountOutMin_, address[] calldata path_, uint256 deadline_)")
     // tenemos todas las transacciones pero hay que recordar que en un bloque dentro puende haber varias transacciones
     const logs = await client.getLogs({
-        address: '0x40ec018CDa28e11c3BfF23487dcE6102459A25B9', //contrato que vamos a estar observando
+        address: '0x7701BA3ac760842318BC6c925c38aD762DDc2E41', //contrato que vamos a estar observando
         event: parseAbiItem('event SwapToken(address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut)'), // evento que vamos a observer
         fromBlock: lastBlock + 1n,
         toBlock: currentBlock
     })
+
+    console.log(logs);
+    
 
     // importante regla: cada transaccion puede estar un un bloque es decir si 10 transaccione eestan en un nbloque
     // la promesa siguiente lo que va hacer es 10 peticiones.
@@ -72,7 +77,7 @@ async function main() {
     const cleanTransactions = transactions.filter((t): t is NonNullable<typeof t> => t !== undefined); // sagrada para quitar undefined
 
 
-    const maxNumberBlock = arrayBlocks.reduce((max, block) => block.blockNumber > max ? block.blockNumber : max, arrayBlocks[0].blockNumber)
+    const maxNumberBlock = arrayBlocks.reduce((max, block) => block.blockNumber > max ? block.blockNumber : max, currentBlock)
     // esta va a ser la transaccion atomica
     const resultTransaction = await db.transaction(async (tx) => {
 
