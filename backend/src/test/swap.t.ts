@@ -103,9 +103,9 @@ function findLargestSwap(swaps: RawSwapEvent[]): RawSwapEvent | null {
   if (swaps.length === 0) return null;
   // Pistas:
   // - Usa swaps.reduce((max, current) => ...)
-   
-  return swaps.reduce((max, current) => max.amountIn > current.amountIn ? max : current, swaps[0]) ; // <-- Completa aquí
-} 
+
+  return swaps.reduce((max, current) => max.amountIn > current.amountIn ? max : current, swaps[0]); // <-- Completa aquí
+}
 
 // ============================================================
 // 3. INDEXADOR Y SINCRONIZACIÓN (Practicando RPC y Flujo)
@@ -131,10 +131,34 @@ async function runIndexerExercise() {
 
   //const logs = await client.getLogs({...});
 
+  const logs = await client.getLogs({
+    address: '0x7701BA3ac760842318BC6c925c38aD762DDc2E41', //contrato que vamos a estar observando
+    event: parseAbiItem('event SwapToken(address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut)'), // evento que vamos a observer
+    fromBlock: startBlock,
+    toBlock: currentBlock
+  })
+
+
   // TODO #5: Mapear, Limpiar y Procesar
   // 1. Mapea los logs al formato RawSwapEvent
   // 2. Filtra con tu type guard: .filter(isValidSwap)
+  const rawSwapEvent: RawSwapEvent[] = logs.map((val) => {
+    return {
+      txHash: val.transactionHash,
+      blockNumber: val.blockNumber,
+      fromUser: val.args.fromUser!,
+      tokenIn: val.args.tokenIn!,
+      tokenOut: val.args.tokenOut!,
+      amountIn: val.args.amountIn!,
+      amountOut: val.args.amountIn!,
+    }
+  }).filter(isValidSwap)
+
+  console.log(rawSwapEvent);
+
   // 3. Si no hay swaps, muestra un mensaje descriptivo y termina limpiamente.
+  if(rawSwapEvent.length === 0 ) console.log("No se han realizado ninguna transaccion en ningun lado");
+
   // 4. Si hay swaps:
   //    - Calcula los usuarios agregados usando aggregateByUser()
   //    - Convierte el Map en un Array ordenado de mayor a menor volumen: [...map.values()].sort(...)
