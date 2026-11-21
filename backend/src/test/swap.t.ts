@@ -63,9 +63,28 @@ function aggregateByUser(swaps: RawSwapEvent[]): Map<Address, UserStats> {
   const userMap = new Map<Address, UserStats>();
 
   swaps.forEach((val, index) => {
-    userMap.set(val.fromUser, {
-      
-    })
+        
+        const registerInMap = userMap.get(val.fromUser)
+        if(!registerInMap){
+            
+            userMap.set(val.fromUser, {
+               userAddress: val.fromUser,
+               totalSwaps: 1,
+               totalAmountIn: val.amountIn,
+               totalAmountOut: val.amountOut,
+               tokensUsed: new Set([val.tokenIn,val.tokenOut]})
+            })
+            return
+        }
+        
+        userMap.set(val.fromUser,{
+               userAddress: val.fromUser,
+               totalSwaps: registerInMap.totalSwaps + 1,
+               totalAmountIn: registerInMap.totalAmountIn + val.amountIn,
+               totalAmountOut: registerInMap.totalAmountOut + val.amountOut,
+               tokensUsed: registerInMap.tokensUsed.add(val.tokenIn,val.tokenOut)
+        })
+    
   })
   // Pistas:
   // - Itera sobre swaps usando .forEach() o for..of
@@ -81,11 +100,10 @@ function aggregateByUser(swaps: RawSwapEvent[]): Map<Address, UserStats> {
  * Encuentra el swap con mayor 'amountIn' dentro de la lista. Si está vacía, retorna null.
  */
 function findLargestSwap(swaps: RawSwapEvent[]): RawSwapEvent | null {
-  if (swaps.length === 0) return null;
-
+  if (swaps.length === 0) return null; 
   // Pistas:
   // - Usa swaps.reduce((max, current) => ...)
-  return null; // <-- Completa aquí
+  return swaps.reduce((max,current)=> max > current ? max : current, 0n); // <-- Completa aquí
 }
 
 // ============================================================
