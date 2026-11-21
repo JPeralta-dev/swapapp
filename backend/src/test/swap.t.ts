@@ -53,7 +53,7 @@ export function isValidSwap(val: any): val is RawSwapEvent {
     return false
   }
 }
- 
+
 /**
  * TODO #2: Agregación con Maps y Sets
  * Recibe una lista de RawSwapEvent y genera un mapa agrupado por usuario (Address).
@@ -62,30 +62,30 @@ export function isValidSwap(val: any): val is RawSwapEvent {
 function aggregateByUser(swaps: RawSwapEvent[]): Map<Address, UserStats> {
   const userMap = new Map<Address, UserStats>();
 
-  swaps.forEach((val, index) => {
-        
-        const registerInMap = userMap.get(val.fromUser)
-        if(!registerInMap){
-            
-            userMap.set(val.fromUser, {
-               userAddress: val.fromUser,
-               totalSwaps: 1,
-               totalAmountIn: val.amountIn,
-               totalAmountOut: val.amountOut,
-               tokensUsed: new Set([val.tokenIn,val.tokenOut]})
-            })
-            return
-        }
-        
-        userMap.set(val.fromUser,{
-               userAddress: val.fromUser,
-               totalSwaps: registerInMap.totalSwaps + 1,
-               totalAmountIn: registerInMap.totalAmountIn + val.amountIn,
-               totalAmountOut: registerInMap.totalAmountOut + val.amountOut,
-               tokensUsed: registerInMap.tokensUsed.add(val.tokenIn,val.tokenOut)
-        })
-    
+  swaps.forEach((val) => {
+    const registerInMap = userMap.get(val.fromUser)
+    if (!registerInMap) {
+
+      userMap.set(val.fromUser, {
+        userAddress: val.fromUser,
+        totalSwaps: 1,
+        totalAmountIn: val.amountIn,
+        totalAmountOut: val.amountOut,
+        tokensUsed: new Set([val.tokenIn, val.tokenOut])
+      })
+      return
+    }
+
+
+    userMap.set(val.fromUser, {
+      userAddress: val.fromUser,
+      totalSwaps: registerInMap.totalSwaps + 1,
+      totalAmountIn: registerInMap.totalAmountIn + val.amountIn,
+      totalAmountOut: registerInMap.totalAmountOut + val.amountOut,
+      tokensUsed: registerInMap.tokensUsed.add(val.tokenIn)
+    })
   })
+
   // Pistas:
   // - Itera sobre swaps usando .forEach() o for..of
   // - Si el usuario ya existe en el Map, actualiza sus totales (¡ojo con bigint: a + b!).
@@ -100,11 +100,12 @@ function aggregateByUser(swaps: RawSwapEvent[]): Map<Address, UserStats> {
  * Encuentra el swap con mayor 'amountIn' dentro de la lista. Si está vacía, retorna null.
  */
 function findLargestSwap(swaps: RawSwapEvent[]): RawSwapEvent | null {
-  if (swaps.length === 0) return null; 
+  if (swaps.length === 0) return null;
   // Pistas:
   // - Usa swaps.reduce((max, current) => ...)
-  return swaps.reduce((max,current)=> max > current ? max : current, 0n); // <-- Completa aquí
-}
+   
+  return swaps.reduce((max, current) => max.amountIn > current.amountIn ? max : current, swaps[0]) ; // <-- Completa aquí
+} 
 
 // ============================================================
 // 3. INDEXADOR Y SINCRONIZACIÓN (Practicando RPC y Flujo)
@@ -127,8 +128,8 @@ async function runIndexerExercise() {
   // Obtén los logs del evento SwapToken usando client.getLogs({...})
   // Contrato de prueba: '0x7701BA3ac760842318BC6c925c38aD762DDc2E41'
   // Evento: 'event SwapToken(address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut)'
-  
-  // const logs = await client.getLogs({...});
+
+  //const logs = await client.getLogs({...});
 
   // TODO #5: Mapear, Limpiar y Procesar
   // 1. Mapea los logs al formato RawSwapEvent
