@@ -19,8 +19,6 @@ async function main() {
     const [existingBlock] = await db.select().from(syncState).where(eq(syncState.id, "swapapp_indexer")) || env.START_BLOCK
 
     const lastBlock = existingBlock ? existingBlock.lastIndexedBlock : env.START_BLOCK - 1n
-
-    console.log(lastBlock, currentBlock, existingBlock);
     
     //const swapTokenItem = parseAbiItem("function swapToken(uint256 amountIn_, uint256 amountOutMin_, address[] calldata path_, uint256 deadline_)")
     // tenemos todas las transacciones pero hay que recordar que en un bloque dentro puende haber varias transacciones
@@ -30,10 +28,7 @@ async function main() {
         fromBlock: lastBlock + 1n,
         toBlock: currentBlock
     })
-
-    console.log(logs);
     
-
     // importante regla: cada transaccion puede estar un un bloque es decir si 10 transaccione eestan en un nbloque
     // la promesa siguiente lo que va hacer es 10 peticiones.
 
@@ -121,7 +116,6 @@ async function main() {
         return Promise.all([block, swap, sync])
     })
 
-    console.log(resultTransaction);
 
 }
 
