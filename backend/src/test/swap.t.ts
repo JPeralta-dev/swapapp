@@ -142,7 +142,7 @@ async function runIndexerExercise() {
   // TODO #5: Mapear, Limpiar y Procesar
   // 1. Mapea los logs al formato RawSwapEvent
   // 2. Filtra con tu type guard: .filter(isValidSwap)
-  const rawSwapEvent: RawSwapEvent[] = logs.map((val) => {
+  const rawSwapEvents: RawSwapEvent[] = logs.map((val) => {
     return {
       txHash: val.transactionHash,
       blockNumber: val.blockNumber,
@@ -154,16 +154,25 @@ async function runIndexerExercise() {
     }
   }).filter(isValidSwap)
 
-  console.log(rawSwapEvent);
+  console.log(rawSwapEvents);
 
   // 3. Si no hay swaps, muestra un mensaje descriptivo y termina limpiamente.
-  if(rawSwapEvent.length === 0 ) console.log("No se han realizado ninguna transaccion en ningun lado");
+  if(rawSwapEvents.length === 0 ) console.log("No se han realizado ninguna transaccion en ningun lado");
 
   // 4. Si hay swaps:
   //    - Calcula los usuarios agregados usando aggregateByUser()
   //    - Convierte el Map en un Array ordenado de mayor a menor volumen: [...map.values()].sort(...)
   //    - Encuentra el swap más grande con findLargestSwap()
   //    - Imprime un resumen de métricas con console.table()
+
+  const resultUsersStas = aggregateByUser(rawSwapEvents)
+  const sortedUsers = [...resultUsersStas.values()].sort((a,b)=>  b.totalSwaps - a.totalSwaps )
+  const largestSwap = findLargestSwap(rawSwapEvents)
+
+  
+  console.table(sortedUsers);
+  console.table([largestSwap]);
+
 
   console.log("✅ Proceso completado exitosamente.");
 }
