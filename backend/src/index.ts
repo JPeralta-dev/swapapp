@@ -133,7 +133,7 @@ function runningMain(ms:number): Promise<void>{
         } catch (error) {
             reject(error)
         }
-        })
+        }, ms)
     })
 }
 
@@ -143,7 +143,5 @@ let isRunning = true
 const pedingTaks = new Set<Promise<void>>()
 // esta parte me genera dudas pero vamos a intentar resolverlo.
 while (isRunning) {
-    
     await runningMain(POLL_INTERVAL_MS)
-
 }
