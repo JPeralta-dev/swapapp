@@ -125,32 +125,15 @@ function sleep(ms: number) {
 
 const errorTasks: unknown[] = []
 
-function runningMain(ms: number): Promise<void> {
-    return new Promise((resolve, reject) => {
-        setTimeout(async () => {
-            try {
-                await main()
-                resolve()
-            } catch (error) {
-                reject(error)
-                
-            }
-        }, ms)
-    })
-}
 
 const POLL_INTERVAL_MS = 5000
 let isRunning = true
 
 // esta parte me genera dudas pero vamos a intentar resolverlo.
 while (isRunning) {
+    await sleep(POLL_INTERVAL_MS)
     try {
-        await runningMain(POLL_INTERVAL_MS)
-
-        if (errorTasks.length >= 3) {
-            isRunning = false
-            console.log(errorTasks);
-        }
+        await main()
     } catch (error) {
         errorTasks.push(error)
         if (errorTasks.length >= 3) {
