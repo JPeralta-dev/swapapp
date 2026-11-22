@@ -1,13 +1,11 @@
-import { timestamp } from 'drizzle-orm/pg-core';
-import { drizzle } from "drizzle-orm/node-postgres"
 import { createPublicClient, http, parseAbiItem } from 'viem'
 import env from "./config/env.js"
 import { blocks, swaps, syncState } from "./db/schemas.js"
 import { uuidv7 } from "uuidv7";
 import { eq } from "drizzle-orm";
-import { Pool } from 'pg';
 
-export const db = drizzle(env.DATABASE_URL)
+
+
 
 
 async function main() {
