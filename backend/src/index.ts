@@ -9,10 +9,7 @@ import { eq } from "drizzle-orm";
 
 
 async function main() {
-    const client = createPublicClient({
-        // quitamos el mainnet porque en anvil estamos utilizando 31337
-        transport: http(env.RPC_URL),
-    })
+    
     const currentBlock = await client.getBlockNumber()
 
     const [existingBlock] = await db.select().from(syncState).where(eq(syncState.id, "swapapp_indexer")) || env.START_BLOCK
