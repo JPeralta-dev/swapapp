@@ -19,8 +19,12 @@ async function main() {
 
     const [existingBlock] = await db.select().from(syncState).where(eq(syncState.id, "swapapp_indexer")) || env.START_BLOCK
 
+
+    
     const lastBlock = existingBlock ? existingBlock.lastIndexedBlock : env.START_BLOCK - 1n
 
+    
+    
     if (currentBlock <= lastBlock) {
         console.log(`Al día con la blockchain (Bloque ${currentBlock}). Esperando...`);
         return;
@@ -28,7 +32,7 @@ async function main() {
     //const swapTokenItem = parseAbiItem("function swapToken(uint256 amountIn_, uint256 amountOutMin_, address[] calldata path_, uint256 deadline_)")
     // tenemos todas las transacciones pero hay que recordar que en un bloque dentro puende haber varias transacciones
     const logs = await client.getLogs({
-        address: '0x7701BA3ac760842318BC6c925c38aD762DDc2E41', //contrato que vamos a estar observando
+        address: '0x0a1862AE3748EA9148B25DF383A0ECaE3d858b13', //contrato que vamos a estar observando
         event: parseAbiItem('event SwapToken(address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut)'), // evento que vamos a observer
         fromBlock: lastBlock,
         toBlock: currentBlock
@@ -81,6 +85,7 @@ async function main() {
     // esta va a ser la transaccion atomica
     await db.transaction(async (tx) => {
 
+        
         if (logs.length === 0 || !transactions) {
             await tx
                 .update(syncState)
