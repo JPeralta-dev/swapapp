@@ -21,12 +21,16 @@ async function main() {
 
     const lastBlock = existingBlock ? existingBlock.lastIndexedBlock : env.START_BLOCK - 1n
 
+    if (currentBlock <= lastBlock) {
+        console.log(`Al día con la blockchain (Bloque ${currentBlock}). Esperando...`);
+        return;
+    }
     //const swapTokenItem = parseAbiItem("function swapToken(uint256 amountIn_, uint256 amountOutMin_, address[] calldata path_, uint256 deadline_)")
     // tenemos todas las transacciones pero hay que recordar que en un bloque dentro puende haber varias transacciones
     const logs = await client.getLogs({
         address: '0x7701BA3ac760842318BC6c925c38aD762DDc2E41', //contrato que vamos a estar observando
         event: parseAbiItem('event SwapToken(address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut)'), // evento que vamos a observer
-        fromBlock: lastBlock + 1n,
+        fromBlock: lastBlock,
         toBlock: currentBlock
     })
 
@@ -142,14 +146,14 @@ let consecutiveError = 0
 
 // esta parte me genera dudas pero vamos a intentar resolverlo.
 while (isRunning) {
-    
+
     try {
         await main()
         consecutiveError = 0
     } catch (error) {
         errorTasks.push(error)
-        consecutiveError+= 1
-        if (consecutiveError>= 3) {
+        consecutiveError += 1
+        if (consecutiveError >= 3) {
             isRunning = false
             console.error("Indexer stopped after 3 failures")
         }
