@@ -181,4 +181,4 @@ export { runIndexerExercise };
 // Solo se ejecuta si se llama directamente a este archivo, no cuando se importa
 if (process.argv[1]?.includes('swap.t.')) {
   runIndexerExercise().catch(console.error);
-}
+}esucrist23

@@ -117,19 +117,35 @@ async function main() {
 
 }
 
+function sleep (ms:number){
+    return new Promise((resolve)=>{
+        setTimeout(resolve, ms)
+    })
+}
+
+
+function runningMain(ms:number): Promise<void>{
+    return new Promise((resolve, reject) => { 
+        setTimeout(async() => {
+            try {
+            await main()
+            resolve()
+        } catch (error) {
+            reject(error)
+        }
+        })
+    })
+}
 await main()
 
 const POLL_INTERVAL_MS = 5000
 let isRunning = true
+    
+
 // esta parte me genera dudas pero vamos a intentar resolverlo.
-while (isRunning) { 
-    new Promise(() => {
-        setTimeout(async () => {
-            try {
-                await main()
-            } catch (error) {
-                
-            }
-        },POLL_INTERVAL_MS)
-    })
+while (isRunning) {
+    // await main()
+    // await sleep(POLL_INTERVAL_MS)
+    await runningMain(POLL_INTERVAL_MS)
+
 }
