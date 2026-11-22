@@ -142,7 +142,7 @@ let consecutiveError = 0
 
 // esta parte me genera dudas pero vamos a intentar resolverlo.
 while (isRunning) {
-    await sleep(POLL_INTERVAL_MS)
+    
     try {
         await main()
         consecutiveError = 0
@@ -154,4 +154,5 @@ while (isRunning) {
             console.error("Indexer stopped after 3 failures")
         }
     }
+    await sleep(POLL_INTERVAL_MS)
 }
