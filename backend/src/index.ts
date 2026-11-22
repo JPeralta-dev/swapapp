@@ -138,14 +138,18 @@ process.on("SIGINT", async () => {
     process.exit(0)
 })
 
+let consecutiveError = 0
+
 // esta parte me genera dudas pero vamos a intentar resolverlo.
 while (isRunning) {
     await sleep(POLL_INTERVAL_MS)
     try {
         await main()
+        consecutiveError = 0
     } catch (error) {
         errorTasks.push(error)
-        if (errorTasks.length >= 3) {
+        consecutiveError+= 1
+        if (consecutiveError>= 3) {
             isRunning = false
             console.error("Indexer stopped after 3 failures")
         }
