@@ -1,4 +1,3 @@
-
 import { db } from './db/index.js';
 import { main } from './indexer/sync.js';
 
@@ -15,8 +14,6 @@ const errorTasks: unknown[] = []
 
 const POLL_INTERVAL_MS = 5000
 let isRunning = true
-
-
 
 process.on("SIGINT", async () => {
     isRunning = false
