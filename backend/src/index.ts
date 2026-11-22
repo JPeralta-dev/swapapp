@@ -136,16 +136,14 @@ function runningMain(ms:number): Promise<void>{
         })
     })
 }
-await main()
 
 const POLL_INTERVAL_MS = 5000
 let isRunning = true
     
-
+const pedingTaks = new Set<Promise<void>>()
 // esta parte me genera dudas pero vamos a intentar resolverlo.
 while (isRunning) {
-    // await main()
-    // await sleep(POLL_INTERVAL_MS)
+    
     await runningMain(POLL_INTERVAL_MS)
 
 }
