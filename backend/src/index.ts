@@ -19,7 +19,7 @@ async function main() {
     const [existingBlock] = await db.select().from(syncState).where(eq(syncState.id, "swapapp_indexer")) || env.START_BLOCK
 
     const lastBlock = existingBlock ? existingBlock.lastIndexedBlock : env.START_BLOCK - 1n
-    
+
     //const swapTokenItem = parseAbiItem("function swapToken(uint256 amountIn_, uint256 amountOutMin_, address[] calldata path_, uint256 deadline_)")
     // tenemos todas las transacciones pero hay que recordar que en un bloque dentro puende haber varias transacciones
     const logs = await client.getLogs({
@@ -28,7 +28,7 @@ async function main() {
         fromBlock: lastBlock + 1n,
         toBlock: currentBlock
     })
-    
+
     // importante regla: cada transaccion puede estar un un bloque es decir si 10 transaccione eestan en un nbloque
     // la promesa siguiente lo que va hacer es 10 peticiones.
 
@@ -74,7 +74,7 @@ async function main() {
 
     const maxNumberBlock = arrayBlocks.reduce((max, block) => block.blockNumber > max ? block.blockNumber : max, currentBlock)
     // esta va a ser la transaccion atomica
-    const resultTransaction = await db.transaction(async (tx) => {
+    await db.transaction(async (tx) => {
 
         if (logs.length === 0 || !transactions) {
             await tx
@@ -83,8 +83,6 @@ async function main() {
                 .where(eq(syncState.id, "swapapp_indexer"))
             return
         };
-        // en mi opinion el worker primero sincroniza el estado y luego si actualiza
-
 
         const block = tx
             .insert(blocks)
@@ -119,4 +117,19 @@ async function main() {
 
 }
 
-await main()    
+await main()
+
+const POLL_INTERVAL_MS = 5000
+let isRunning = true
+// esta parte me genera dudas pero vamos a intentar resolverlo.
+while (isRunning) { 
+    new Promise(() => {
+        setTimeout(async () => {
+            try {
+                await main()
+            } catch (error) {
+                
+            }
+        },POLL_INTERVAL_MS)
+    })
+}
