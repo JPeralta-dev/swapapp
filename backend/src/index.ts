@@ -123,7 +123,8 @@ function sleep(ms: number) {
     })
 }
 
-const errorTaks = new Set()
+const errorTasks: unknown[] = []
+
 function runningMain(ms: number): Promise<void> {
     return new Promise((resolve, reject) => {
         setTimeout(async () => {
@@ -132,7 +133,7 @@ function runningMain(ms: number): Promise<void> {
                 resolve()
             } catch (error) {
                 reject(error)
-                errorTaks.add(error)
+                
             }
         }, ms)
     })
@@ -143,10 +144,18 @@ let isRunning = true
 
 // esta parte me genera dudas pero vamos a intentar resolverlo.
 while (isRunning) {
-    await runningMain(POLL_INTERVAL_MS)
+    try {
+        await runningMain(POLL_INTERVAL_MS)
 
-    if ([...errorTaks].length = 3) {
-        isRunning = false
-        console.log(errorTaks);
+        if (errorTasks.length >= 3) {
+            isRunning = false
+            console.log(errorTasks);
+        }
+    } catch (error) {
+        errorTasks.push(error)
+        if (errorTasks.length >= 3) {
+            isRunning = false
+            console.error("Indexer stopped after 3 failures")
+        }
     }
 }
