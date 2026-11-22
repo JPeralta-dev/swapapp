@@ -117,31 +117,36 @@ async function main() {
 
 }
 
-function sleep (ms:number){
-    return new Promise((resolve)=>{
+function sleep(ms: number) {
+    return new Promise((resolve) => {
         setTimeout(resolve, ms)
     })
 }
 
-
-function runningMain(ms:number): Promise<void>{
-    return new Promise((resolve, reject) => { 
-        setTimeout(async() => {
+const errorTaks = new Set()
+function runningMain(ms: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+        setTimeout(async () => {
             try {
-            await main()
-            resolve()
-        } catch (error) {
-            reject(error)
-        }
+                await main()
+                resolve()
+            } catch (error) {
+                reject(error)
+                errorTaks.add(error)
+            }
         }, ms)
     })
 }
 
 const POLL_INTERVAL_MS = 5000
 let isRunning = true
-    
-const pedingTaks = new Set<Promise<void>>()
+
 // esta parte me genera dudas pero vamos a intentar resolverlo.
 while (isRunning) {
     await runningMain(POLL_INTERVAL_MS)
+
+    if ([...errorTaks].length = 3) {
+        isRunning = false
+        console.log(errorTaks);
+    }
 }
