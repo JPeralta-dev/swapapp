@@ -5,6 +5,7 @@ import env from "./config/env.js"
 import { blocks, swaps, syncState } from "./db/schemas.js"
 import { uuidv7 } from "uuidv7";
 import { eq } from "drizzle-orm";
+import { Pool } from 'pg';
 
 export const db = drizzle(env.DATABASE_URL)
 
@@ -128,6 +129,14 @@ const errorTasks: unknown[] = []
 
 const POLL_INTERVAL_MS = 5000
 let isRunning = true
+
+
+
+process.on("SIGINT", async () => {
+    isRunning = false
+    await db.$client.end()
+    process.exit(0)
+})
 
 // esta parte me genera dudas pero vamos a intentar resolverlo.
 while (isRunning) {
