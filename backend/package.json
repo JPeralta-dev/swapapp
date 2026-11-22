@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:push": "npx drizzle-kit push",
+    "test:exercise": "tsx src/test/swap.mock.test.ts",
+    "dev:exercise": "tsx src/test/swap.t.ts",
+    "db:push": "drizzle-kit push",
     "dev": "tsx watch src/index.ts"
   },
   "keywords": [],

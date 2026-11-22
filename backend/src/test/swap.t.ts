@@ -6,7 +6,7 @@ import z from "zod"
 // 1. TIPOS Y CONTRATOS (Practicando TypeScript y Tipado)
 // ============================================================
 
-type RawSwapEvent = z.infer<typeof RawSwapEventSchema>
+export type RawSwapEvent = z.infer<typeof RawSwapEventSchema>
 
 
 const RawSwapEventSchema = z.object({
@@ -46,12 +46,8 @@ export interface BatchMetrics {
  * usando un Type Predicate (val is RawSwapEvent).
  */
 export function isValidSwap(val: any): val is RawSwapEvent {
-  try {
-    RawSwapEventSchema.parse(val)
-    return true
-  } catch (error) {
-    return false
-  }
+  const rawSwaptEventParsed = RawSwapEventSchema.safeParse(val)
+  return rawSwaptEventParsed.success
 }
 
 /**
@@ -59,7 +55,7 @@ export function isValidSwap(val: any): val is RawSwapEvent {
  * Recibe una lista de RawSwapEvent y genera un mapa agrupado por usuario (Address).
  * Cada usuario debe acumular su totalSwaps, totalAmountIn, totalAmountOut y los tokens que usó.
  */
-function aggregateByUser(swaps: RawSwapEvent[]): Map<Address, UserStats> {
+export function aggregateByUser(swaps: RawSwapEvent[]): Map<Address, UserStats> {
   const userMap = new Map<Address, UserStats>();
 
   swaps.forEach((val) => {
@@ -82,7 +78,7 @@ function aggregateByUser(swaps: RawSwapEvent[]): Map<Address, UserStats> {
       totalSwaps: registerInMap.totalSwaps + 1,
       totalAmountIn: registerInMap.totalAmountIn + val.amountIn,
       totalAmountOut: registerInMap.totalAmountOut + val.amountOut,
-      tokensUsed: registerInMap.tokensUsed.add(val.tokenIn)
+      tokensUsed: registerInMap.tokensUsed.add(val.tokenIn).add(val.tokenOut)
     })
   })
 
@@ -99,7 +95,7 @@ function aggregateByUser(swaps: RawSwapEvent[]): Map<Address, UserStats> {
  * TODO #3: Encontrar el Swap más grande con .reduce()
  * Encuentra el swap con mayor 'amountIn' dentro de la lista. Si está vacía, retorna null.
  */
-function findLargestSwap(swaps: RawSwapEvent[]): RawSwapEvent | null {
+export function findLargestSwap(swaps: RawSwapEvent[]): RawSwapEvent | null {
   if (swaps.length === 0) return null;
   // Pistas:
   // - Usa swaps.reduce((max, current) => ...)
@@ -144,20 +140,23 @@ async function runIndexerExercise() {
   // 2. Filtra con tu type guard: .filter(isValidSwap)
   const rawSwapEvents: RawSwapEvent[] = logs.map((val) => {
     return {
-      txHash: val.transactionHash,
+      txHash: val.transactionHash.toLocaleLowerCase(),
       blockNumber: val.blockNumber,
-      fromUser: val.args.fromUser!,
-      tokenIn: val.args.tokenIn!,
-      tokenOut: val.args.tokenOut!,
+      fromUser: val.args.fromUser!.toLocaleLowerCase(),
+      tokenIn: val.args.tokenIn!.toLocaleLowerCase(),
+      tokenOut: val.args.tokenOut!.toLocaleLowerCase(),
       amountIn: val.args.amountIn!,
-      amountOut: val.args.amountIn!,
+      amountOut: val.args.amountOut!,
     }
   }).filter(isValidSwap)
 
   console.log(rawSwapEvents);
 
   // 3. Si no hay swaps, muestra un mensaje descriptivo y termina limpiamente.
-  if(rawSwapEvents.length === 0 ) console.log("No se han realizado ninguna transaccion en ningun lado");
+  if (rawSwapEvents.length === 0) {
+    console.log("No se han realizado ninguna transaccion en este rango.");
+    return; // 👈 ¡Faltaba el return!
+  }
 
   // 4. Si hay swaps:
   //    - Calcula los usuarios agregados usando aggregateByUser()
@@ -166,10 +165,10 @@ async function runIndexerExercise() {
   //    - Imprime un resumen de métricas con console.table()
 
   const resultUsersStas = aggregateByUser(rawSwapEvents)
-  const sortedUsers = [...resultUsersStas.values()].sort((a,b)=>  b.totalSwaps - a.totalSwaps )
+  const sortedUsers = [...resultUsersStas.values()].sort((a, b) => b.totalSwaps - a.totalSwaps)
   const largestSwap = findLargestSwap(rawSwapEvents)
 
-  
+
   console.table(sortedUsers);
   console.table([largestSwap]);
 
@@ -177,4 +176,9 @@ async function runIndexerExercise() {
   console.log("✅ Proceso completado exitosamente.");
 }
 
-runIndexerExercise().catch(console.error);
+export { runIndexerExercise };
+
+// Solo se ejecuta si se llama directamente a este archivo, no cuando se importa
+if (process.argv[1]?.includes('swap.t.')) {
+  runIndexerExercise().catch(console.error);
+}
