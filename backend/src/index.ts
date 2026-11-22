@@ -3,10 +3,8 @@ import env from "./config/env.js"
 import { blocks, swaps, syncState } from "./db/schemas.js"
 import { uuidv7 } from "uuidv7";
 import { eq } from "drizzle-orm";
-
-
-
-
+import { client } from './blockchain/client.js';
+import { db } from './db/index.js';
 
 async function main() {
     
