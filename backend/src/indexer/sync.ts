@@ -27,7 +27,7 @@ export async function main() {
     const logs = await client.getLogs({
         address: env.SWAPAPP_CONTRACT_ADDRESS, //contrato que vamos a estar observando
         event: parseAbiItem('event SwapToken(address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut)'), // evento que vamos a observer
-        fromBlock: lastBlock,
+        fromBlock: lastBlock + 1n,
         toBlock: currentBlock
     })
 
