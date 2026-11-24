@@ -1,8 +1,6 @@
 import { db } from './db/index.js';
 import { main } from './indexer/sync.js';
 
-
-
 function sleep(ms: number) {
     return new Promise((resolve) => {
         setTimeout(resolve, ms)
