@@ -27,7 +27,10 @@ let consecutiveError = 0
 while (isRunning) {
 
     try {
-        await main()
+        const result = await main()
+        if (result?.isCatchUp) {
+            await sleep(POLL_INTERVAL_MS)
+        }
         consecutiveError = 0
     } catch (error) {
         errorTasks.push(error)
@@ -37,5 +40,5 @@ while (isRunning) {
             console.error("Indexer stopped after 3 failures")
         }
     }
-    await sleep(POLL_INTERVAL_MS)
+    
 }

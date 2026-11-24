@@ -6,7 +6,11 @@ import { blocks, swaps, syncState } from "../db/schemas.js";
 import { db } from "../db/index.js";
 import { uuidv7 } from "uuidv7"
 
-export async function main() {
+
+
+export async function main(): Promise<{
+    isCatchUp: boolean;
+} | undefined> {
 
     const currentBlock = await client.getBlockNumber()
 
@@ -119,5 +123,6 @@ export async function main() {
         return Promise.all([block, swap, sync])
     })
 
+    return { isCatchUp: toBlock >= currentBlock }
 
 }
