@@ -16,19 +16,21 @@ export async function main() {
 
     const lastBlock = existingBlock ? existingBlock.lastIndexedBlock : env.START_BLOCK - 1n
 
-
-
     if (currentBlock <= lastBlock) {
         console.log(`Al día con la blockchain (Bloque ${currentBlock}). Esperando...`);
         return;
     }
+
+    const toBlock = lastBlock - currentBlock > env.MAX_BLOCK_RANGE ? lastBlock + env.MAX_BLOCK_RANGE - 1n : currentBlock
+
+    // 200 - 300 = 100 > 50, si es true entonces 250 no es mayor a el rango es decir cumple
     //const swapTokenItem = parseAbiItem("function swapToken(uint256 amountIn_, uint256 amountOutMin_, address[] calldata path_, uint256 deadline_)")
     // tenemos todas las transacciones pero hay que recordar que en un bloque dentro puende haber varias transacciones
     const logs = await client.getLogs({
         address: env.SWAPAPP_CONTRACT_ADDRESS, //contrato que vamos a estar observando
         event: parseAbiItem('event SwapToken(address indexed fromUser, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut)'), // evento que vamos a observer
         fromBlock: lastBlock + 1n,
-        toBlock: currentBlock
+        toBlock
     })
 
     // importante regla: cada transaccion puede estar un un bloque es decir si 10 transaccione eestan en un nbloque
